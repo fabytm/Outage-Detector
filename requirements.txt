@@ -1,0 +1,9 @@
+certifi==2019.9.11
+chardet==3.0.4
+idna==2.8
+pushbullet.py==0.11.0
+python-magic==0.4.15
+requests==2.22.0
+six==1.13.0
+urllib3==1.25.6
+websocket-client==0.56.0
