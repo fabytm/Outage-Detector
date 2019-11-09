@@ -40,7 +40,10 @@ except FileNotFoundError:
 
 file_data = read_string.split(",")
 last_power_timestring = file_data[0]
-last_internet_timestring = file_data[1]
+try:
+    last_internet_timestring = file_data[1]
+except IndexError:
+    last_internet_timestring = current_timestring
 
 with open("last_timestamp.txt", 'w+') as file:
     if internet_connected:
