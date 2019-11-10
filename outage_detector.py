@@ -36,7 +36,6 @@ except IndexError:
     print("You need to give one argument!")
     exit(1)
 
-
 current_timestamp = datetime.now()
 current_timestring = datetime.strftime(current_timestamp, timestamp_format)
 
