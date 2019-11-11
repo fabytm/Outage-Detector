@@ -98,3 +98,6 @@ if internet_connected:
         push.push_to_iOS("Internet down",
                          "Internet has been down for {} to {} minutes.".format(min_outage_time, internet_downtime),
                          "pb_key.txt")
+
+print("Script has run at {}. Internet connected: {}. Just booted: {}.".format(current_timestring, internet_connected,
+                                                                              just_booted))
