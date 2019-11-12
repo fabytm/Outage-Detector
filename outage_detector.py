@@ -20,7 +20,7 @@ def check_internet_connection():
 # from the last run in determining the periodicity of the script runs
 def extract_run_periodicity(scheduled_now, last_scheduled, current_time, last_power_time, last_period):
     if scheduled_now == "scheduled" and last_scheduled == "scheduled":
-        return int((last_power_time - current_time).total_seconds() / 60)
+        return int((current_time - last_power_time).total_seconds() / 60)
     else:
         return last_period
 
