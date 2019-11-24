@@ -17,8 +17,9 @@ Using the requirements.txt file you can install the required packages through pi
 
 You need to provide your own Pushbullet API key, which can be optained at: https://docs.pushbullet.com/#api-quick-start
 
-Cron job template (script running every 5 minutes):
+Cron job template (script running every 5 minutes and at boot up):
 
 ```
-*/5 * * * * path/to/python/interpreter/python3 /path/to/project/outage_detector.py >> path/to/project/log.txt 2>path/to/project/errors.txt
+*/5 * * * * path/to/python/python3 /path/to/project/outage_detector.py scheduled >> path/to/project/log.txt 2>path/to/project/errors.txt
+@reboot sleep 60 && path/to/python/python3 /path/to/project/outage_detector.py boot >> path/to/project/log.txt 2>path/to/project/errors.txt
 ```
