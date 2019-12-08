@@ -15,11 +15,22 @@ The script is meant to be run periodically (ideally scheduled through a task sch
 
 Using the requirements.txt file you can install the required packages through pip.
 
-You need to provide your own Pushbullet API key, which can be optained at: https://docs.pushbullet.com/#api-quick-start
+It can notify you of power outages and internet downtime by sending a notification to your phone or by sending you an email (it can even send an email to multiple receipients).
 
-Cron job template (script running every 5 minutes and at boot up):
+If you wish to receive notifications, you need to provide your own Pushbullet API key, which can be optained at: https://docs.pushbullet.com/#api-quick-start
+
+Otherwise, in order to receive mails, you need to fill in the information in the config.json file.
+
+Notifications Cron job template (script running every 5 minutes and at boot up):
 
 ```
-*/5 * * * * path/to/python/python3 /path/to/project/outage_detector.py scheduled >> path/to/project/log.txt 2>path/to/project/errors.txt
-@reboot sleep 60 && path/to/python/python3 /path/to/project/outage_detector.py boot >> path/to/project/log.txt 2>path/to/project/errors.txt
+*/5 * * * * path/to/python/python3 /path/to/project/outage_detector.py scheduled notification >> path/to/project/log.txt 2>path/to/project/errors.txt
+@reboot sleep 60 && path/to/python/python3 /path/to/project/outage_detector.py boot notification >> path/to/project/log.txt 2>path/to/project/errors.txt
+```
+
+Mail Cron job template (script running every 5 minutes and at boot up):
+
+```
+*/5 * * * * path/to/python/python3 /path/to/project/outage_detector.py scheduled mail >> path/to/project/log.txt 2>path/to/project/errors.txt
+@reboot sleep 60 && path/to/python/python3 /path/to/project/outage_detector.py boot mail >> path/to/project/log.txt 2>path/to/project/errors.txt
 ```
