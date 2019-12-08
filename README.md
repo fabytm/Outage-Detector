@@ -17,7 +17,7 @@ Using the requirements.txt file you can install the required packages through pi
 
 It can notify you of power outages and internet downtime by sending a notification to your phone or by sending you an email (it can even send an email to multiple receipients).
 
-If you wish to receive notifications, you need to provide your own Pushbullet API key, which can be optained at: https://docs.pushbullet.com/#api-quick-start
+If you wish to receive notifications, you need to provide your own Pushbullet API key in a file named `pb_key.txt`, which can be optained at: https://docs.pushbullet.com/#api-quick-start
 
 Otherwise, in order to receive mails, you need to fill in the information in the config.json file.
 
