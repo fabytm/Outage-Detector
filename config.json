@@ -1,0 +1,6 @@
+{
+  "sender":"x@gmail.com",
+  "receivers":"x@gmail.com,y@gmail.com",
+  "smtp_server":"smtp.gmail.com",
+  "password":"xxx"
+}
