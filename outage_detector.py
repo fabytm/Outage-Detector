@@ -6,7 +6,10 @@ import json
 import pushnotification as push
 import send_mail as mail
 
+address_available = False
+address = ""
 timestamp_format = "%d-%m-%Y %H-%M-%S"
+hour_minute_format = "%H:%M"
 
 
 def check_internet_connection():
@@ -50,11 +53,19 @@ if not send_notification:
             receivers = mail_json["receivers"]
             smtp_server = mail_json["smtp_server"]
             password = mail_json["password"]
+            address = mail_json["house address"]
     except FileNotFoundError:
         print("Mail will not be sent, there is no config file in the folder.")
+    except KeyError:
+        print("Config.json file doesn't have all fields (sender, receivers, smtp_server, password, house address")
 
 current_timestamp = datetime.now()
 current_timestring = datetime.strftime(current_timestamp, timestamp_format)
+current_hour_min = datetime.strftime(current_timestamp, hour_minute_format)
+
+if address:
+    address_available = True
+
 
 try:
     with open("last_timestamp.txt") as file:
@@ -98,14 +109,15 @@ if internet_connected:
             min_outage_time = max(range(0, power_outage_time + 1, periodicity))
         else:
             min_outage_time = 0
+        notification = "Power was out for {} to {} minutes at {}.".format(min_outage_time, power_outage_time,
+                                                                          current_hour_min)
+        if address_available:
+            notification += " Address: {}.".format(address)
         print("Power was out for {} to {} minutes at {}".format(min_outage_time, power_outage_time, current_timestring))
         if send_notification:
-            push.push_to_iOS("Power outage",
-                             "Power was out for {} to {} minutes.".format(min_outage_time, power_outage_time),
-                             "pb_key.txt")
+            push.push_to_iOS("Power outage", notification, "pb_key.txt")
         else:
-            mail.send_mail(sender, receivers, "Power outage", "Power was out for {} to {} minutes."
-                           .format(min_outage_time, power_outage_time), smtp_server, password)
+            mail.send_mail(sender, receivers, "Power outage", notification, smtp_server, password)
 
     if not last_power_timestring == last_internet_timestring:
         last_internet_timestamp = datetime.strptime(last_internet_timestring, timestamp_format)
@@ -116,13 +128,14 @@ if internet_connected:
             min_outage_time = 0
         print("Internet was down for {} to {} minutes at {}".format(min_outage_time, internet_downtime,
                                                                     current_timestring))
+        notification = "Internet has been down for {} to {} minutes at {}.".format(min_outage_time, internet_downtime,
+                                                                                   current_hour_min)
+        if address_available:
+            notification += " Address: {}.".format(address)
         if send_notification:
-            push.push_to_iOS("Internet down",
-                             "Internet has been down for {} to {} minutes.".format(min_outage_time, internet_downtime),
-                             "pb_key.txt")
+            push.push_to_iOS("Internet down", notification, "pb_key.txt")
         else:
-            mail.send_mail(sender, receivers, "Internet down", "Internet has been down for {} to {} minutes."
-                           .format(min_outage_time, internet_downtime), smtp_server, password)
+            mail.send_mail(sender, receivers, "Internet down", notification, smtp_server, password)
 
 print("Script has run at {}. Internet connected: {}. Just booted: {}.".format(current_timestring, internet_connected,
                                                                               just_booted))
