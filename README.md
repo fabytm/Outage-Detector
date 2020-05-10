@@ -1,5 +1,5 @@
 # Outage Detector
-Simple script meant to notify user if a power outage has occured or if the internet has been down.
+Simple module meant to notify user if a power outage has occured or if the internet has been down.
 
 ## What it does
 
@@ -11,26 +11,26 @@ Internet downtime is detected if the 2 timestamps written to the file differ and
 
 ## How to run it
 
-The script is meant to be run periodically (ideally scheduled through a task scheduler, such as cron, on machines with Unix OSes).
-
-Using the requirements.txt file you can install the required packages through pip.
-
-It can notify you of power outages and internet downtime by sending a notification to your phone or by sending you an email (it can even send an email to multiple receipients).
-
-If you wish to receive notifications, you need to provide your own Pushbullet API key in a file named `pb_key.txt`, which can be optained at: https://docs.pushbullet.com/#api-quick-start
-
-Otherwise, in order to receive mails, you need to fill in the information in the config.json file.
-
-Notifications Cron job template (script running every 5 minutes and at boot up):
+Install the module in a virtual environment with pip:
 
 ```
-*/5 * * * * path/to/python/python3 /path/to/project/outage_detector.py scheduled notification >> path/to/project/log.txt 2>path/to/project/errors.txt
-@reboot sleep 60 && path/to/python/python3 /path/to/project/outage_detector.py boot notification >> path/to/project/log.txt 2>path/to/project/errors.txt
+pip install Outage-Detector
 ```
 
-Mail Cron job template (script running every 5 minutes and at boot up):
+Alternatively, you can also install the module by cloning this git repo and running setup.py
 
 ```
-*/5 * * * * path/to/python/python3 /path/to/project/outage_detector.py scheduled mail >> path/to/project/log.txt 2>path/to/project/errors.txt
-@reboot sleep 60 && path/to/python/python3 /path/to/project/outage_detector.py boot mail >> path/to/project/log.txt 2>path/to/project/errors.txt
+git clone https://github.com/fabytm/Outage-Detector.git
+python setup.py install
 ```
+
+Afterwards, all you need to do is to run the outage_detector command line interface for the initialization process:
+
+```
+outage_detector --init
+```
+
+From here you can choose the way you want to be notified and will be prompted to enter either your e-mail information or PushBullet API key.
+
+Additionally, it will also ask you if you want to set up scheduling for this module. Choosing to do so is recommended for inexperienced users (this will create 2 cron jobs, one running at boot time and one every 5 minutes, to check in on internet status and record timestamp if either the internet connection drops or a power outage happens).
+
