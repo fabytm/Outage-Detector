@@ -17,20 +17,20 @@ def initialize():
     if not os.path.exists(config_path):
         os.makedirs(config_path)
     if os.path.exists(os.path.join(config_path, "config.json")):
-        result = input("Configuration file already exists. Would you like to reconfigure the script? ")
+        result = input("Configuration file already exists. Would you like to reconfigure the script? (yes/no) ")
         if result.lower() != "yes":
-            print("Alright, script should be ready to run. If you run into issues, run the initialization process"
+            print("Alright, script should be ready to run. If you run into issues, run the initialization process "
                   "again")
             exit(1)
 
     json_data = {}
     print("We are going to walk you through setting up this script!")
     notification_type = None
-    while notification_type not in {"mail", "notification"}:
-        notification_type = input("Would you like to be alerted of an outage through a notification on your phone "
-                                  "or through mail? ")
-        if notification_type not in {"mail", "notification"}:
-            print("You need to input either mail or notification!")
+    while notification_type not in {"mail", "notification", "ifttt"}:
+        notification_type = input("Would you like to be alerted of an outage through a notification on your phone, "
+                                  "through mail, or through ifttt? ")
+        if notification_type not in {"mail", "notification", "ifttt"}:
+            print("You need to input mail, notification, or ifttt!")
     json_data["notification_type"] = notification_type
     if notification_type == "mail":
         mail_working = False
@@ -109,6 +109,31 @@ def initialize():
         with open(os.path.join(config_path, 'pb_key.txt'), 'w+') as pushbullet_file:
             pushbullet_file.write(pushbullet_key)
 
+    elif notification_type == "ifttt":
+        ifttt_working = False
+        failed_attempts = 0
+        while not ifttt_working:
+            try:
+                ifttt_name = input("Input your event name: ")
+                keyring.set_password("IFTTT-OutageDetector", ifttt_name, getpass.getpass("Input your IFTTT API key: "))
+                api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
+                print("Trying to send a notification through IFTTT!")
+                push.push_to_ifttt(ifttt_name, api_key, "Testing IFTTT")
+                ifttt_work = input("Did you get the notification? (y/n) ")
+                if ifttt_work == "y":
+                    ifttt_working = True
+                elif ifttt_work == "n":
+                    failed_attempts += 1
+                    if failed_attempts >= 3:
+                        print("Too many failed attempts, exiting script, try again later!")
+                        exit(1)
+                    print("Check to make sure you followed the steps correctly and try again.")
+            except requests.exceptions.ConnectionError:
+                print("No internet, try reconnecting and running the script again!")
+                exit(1)
+        with open(os.path.join(config_path, 'ifttt_name.txt'), 'w+') as ifttt_nam:
+            ifttt_nam.write(ifttt_name)
+    
     json_data["house_address"] = input("Enter a description of the run location (used to tell you in the "
                                        "{} where the outage happened): ".format(notification_type))
     with open(os.path.join(config_path, 'config.json'), 'w+') as json_file:
