@@ -34,3 +34,14 @@ From here you can choose the way you want to be notified and will be prompted to
 
 Additionally, it will also ask you if you want to set up scheduling for this module. Choosing to do so is recommended for inexperienced users (this will create 2 cron jobs, one running at boot time and one every 5 minutes, to check in on internet status and record timestamp if either the internet connection drops or a power outage happens).
 
+## How to setup IFTTT
+
+Install the IFTTT app and either create an account or sign in to an existing account and create a new applet. 
+
+Next, select the plus button beside the word This and choose the Webhooks service. Select Recieve a web request and click Connect. Choose an event name—you will need to remember this for later. 
+
+Select the plus button beside the word That and choose any action that you like. Clear everything from the message text box and choose Value1 from the Insert Ingredients menu. Enter any necessary information and press finish. 
+
+Select the Webhooks icon in the top left of the screen and press the Documentation button. This will give you a key which you will need for initialization.
+
+Finally, complete the outage_detector initialization process by running the command above.
