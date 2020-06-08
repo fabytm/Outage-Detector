@@ -8,7 +8,7 @@ with open("README.md", 'r') as readme:
 
 setup(
     name='Outage Detector',
-    version='1.0.1',
+    version='1.1',
     description='A module helping you find out when internet and power outages happen.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -20,6 +20,7 @@ setup(
             'outage_detector = outagedetector.__main__:main'
         ]
     },
+    url='https://github.com/fabytm/Outage-Detector',
     author='Butean Fabian',
     author_email='buteanfabian@gmail.com'
 )

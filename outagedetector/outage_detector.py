@@ -74,24 +74,21 @@ def check_power_and_internet(run, notification):
                 with open(os.path.join(config_path, "config.json")) as json_file:
                     notification_json = json.load(json_file)
                     address = notification_json["house_address"]
-                    ifttt_name = notification_json["ifttt_event"]
             except FileNotFoundError:
                 print("Configuration file does not exist, try running the initial configuration again!")
             except KeyError:
                 print("Config.json file doesn't have all fields, try running the initial configuration again!")
         else:
-            with open(os.path.join(config_path, "ifttt_name.txt"), 'r') as ifttt_name:
-                ifttt_name = ifttt_name.read()
-            api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
             try:
                 with open(os.path.join(config_path, "config.json")) as json_file:
                     notification_json = json.load(json_file)
+                    ifttt_name = notification_json["ifttt_event"]
                     address = notification_json["house_address"]
             except FileNotFoundError:
                 print("Configuration file does not exist, try running the initial configuration again!")
             except KeyError:
                 print("Config.json file doesn't have all fields, try running the initial configuration again!")
-
+            api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
 
     if address:
         address_available = True
