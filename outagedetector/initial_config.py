@@ -91,7 +91,9 @@ def initialize():
         failed_attempts = 0
         while not pushbullet_working:
             try:
-                pushbullet_key = input("Input your PushBullet API key: ")
+                keyring.set_password("PushBullet-OutageDetector", "pushbullet",
+                                     getpass.getpass("Input your PushBullet API key: "))
+                pushbullet_key = keyring.get_password("PushBullet-OutageDetector", "pushbullet")
                 print("Trying to send a notification through PushBullet!")
                 push.push_to_iOS("Testing PushBullet Key", "Test is successful!", pushbullet_key)
                 pushbullet_working = True

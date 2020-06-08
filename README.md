@@ -14,14 +14,14 @@ Internet downtime is detected if the 2 timestamps written to the file differ and
 Install the module in a virtual environment with pip:
 
 ```
-pip install Outage-Detector
+pip3 install Outage-Detector
 ```
 
 Alternatively, you can also install the module by cloning this git repo and running setup.py
 
 ```
 git clone https://github.com/fabytm/Outage-Detector.git
-python setup.py install
+python3 setup.py install
 ```
 
 Afterwards, all you need to do is to run the outage_detector command line interface for the initialization process:
@@ -38,10 +38,10 @@ Additionally, it will also ask you if you want to set up scheduling for this mod
 
 Install the IFTTT app and either create an account or sign in to an existing account and create a new applet. 
 
-Next, select the plus button beside the word This and choose the Webhooks service. Select Recieve a web request and click Connect. Choose an event name—you will need to remember this for later. 
+Next, select the plus button beside the word This and choose the Webhooks service. Select Recieve a web request and click Connect. Choose an event name — you will need to remember this for later.
 
 Select the plus button beside the word That and choose any action that you like. Clear everything from the message text box and choose Value1 from the Insert Ingredients menu. Enter any necessary information and press finish. 
 
-Select the Webhooks icon in the top left of the screen and press the Documentation button. This will give you a key which you will need for initialization.
+Select the Webhooks icon in the top left of the screen and press the Documentation button (in a web browser). This will give you a key which you will need for initialization.
 
 Finally, complete the outage_detector initialization process by running the command above.

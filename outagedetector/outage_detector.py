@@ -68,8 +68,7 @@ def check_power_and_internet(run, notification):
             print("Config.json file doesn't have all fields (sender, receivers, smtp_server, house address")
     else:
         if not ifttt_notification:
-            with open(os.path.join(config_path, "pb_key.txt"), 'r') as push_file:
-                push_key = push_file.read()
+            push_key = keyring.get_password("PushBullet-OutageDetector", "pushbullet")
             try:
                 with open(os.path.join(config_path, "config.json")) as json_file:
                     notification_json = json.load(json_file)
