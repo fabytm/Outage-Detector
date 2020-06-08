@@ -10,7 +10,7 @@ def main(sysargv=None):
     parser.add_argument('--run', dest='run', help='Must be used in conjunction with --notify',
                         choices={"boot", "scheduled"})
     parser.add_argument('--notify', dest='notify', help='Must be used in conjunction with --run',
-                        choices={"mail", "notification"})
+                        choices={"mail", "notification", "ifttt"})
 
     args = parser.parse_args()
 

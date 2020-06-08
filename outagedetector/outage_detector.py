@@ -33,10 +33,14 @@ def check_power_and_internet(run, notification):
         just_booted = True
     elif run == "scheduled":
         just_booted = False
-    if notification == "notification":
+    if notification == "notification" or "ifttt":
         send_notification = True
+        ifttt_notification = False
     elif notification == "mail":
         send_notification = False
+        ifttt_notification = False
+    if notification == "ifttt":
+        ifttt_notification = True
 
     config_path = os.path.join(os.path.expanduser("~"), ".config/outagedetector")
     address_available = False
@@ -63,16 +67,31 @@ def check_power_and_internet(run, notification):
         except KeyError:
             print("Config.json file doesn't have all fields (sender, receivers, smtp_server, house address")
     else:
-        with open(os.path.join(config_path, "pb_key.txt"), 'r') as push_file:
-            push_key = push_file.read()
-        try:
-            with open(os.path.join(config_path, "config.json")) as json_file:
-                notification_json = json.load(json_file)
-                address = notification_json["house_address"]
-        except FileNotFoundError:
-            print("Configuration file does not exist, try running the initial configuration again!")
-        except KeyError:
-            print("Config.json file doesn't have all fields, try running the initial configuration again!")
+        if not ifttt_notification:
+            with open(os.path.join(config_path, "pb_key.txt"), 'r') as push_file:
+                push_key = push_file.read()
+            try:
+                with open(os.path.join(config_path, "config.json")) as json_file:
+                    notification_json = json.load(json_file)
+                    address = notification_json["house_address"]
+                    ifttt_name = notification_json["ifttt_event"]
+            except FileNotFoundError:
+                print("Configuration file does not exist, try running the initial configuration again!")
+            except KeyError:
+                print("Config.json file doesn't have all fields, try running the initial configuration again!")
+        else:
+            with open(os.path.join(config_path, "ifttt_name.txt"), 'r') as ifttt_name:
+                ifttt_name = ifttt_name.read()
+            api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
+            try:
+                with open(os.path.join(config_path, "config.json")) as json_file:
+                    notification_json = json.load(json_file)
+                    address = notification_json["house_address"]
+            except FileNotFoundError:
+                print("Configuration file does not exist, try running the initial configuration again!")
+            except KeyError:
+                print("Config.json file doesn't have all fields, try running the initial configuration again!")
+
 
     if address:
         address_available = True
@@ -128,7 +147,10 @@ def check_power_and_internet(run, notification):
             print("Power was out for {} to {} minutes at {}".format(min_outage_time, power_outage_time,
                                                                     current_timestring))
             if send_notification:
-                push.push_to_iOS("Power outage", notification, push_key)
+                if ifttt_notification:
+                    push.push_to_ifttt(ifttt_name, api_key, notification)
+                else:
+                    push.push_to_iOS("Power outage", notification, push_key)
             else:
                 mail.send_mail(sender, receivers, "Power outage", notification, smtp_server, password)
 
@@ -147,7 +169,10 @@ def check_power_and_internet(run, notification):
             if address_available:
                 notification += " Address: {}.".format(address)
             if send_notification:
-                push.push_to_iOS("Internet down", notification, push_key)
+                if ifttt_notification:
+                    push.push_to_ifttt(ifttt_name, api_key, notification)
+                else:
+                    push.push_to_iOS("Internet down", notification, push_key)
             else:
                 mail.send_mail(sender, receivers, "Internet down", notification, smtp_server, password)
 
