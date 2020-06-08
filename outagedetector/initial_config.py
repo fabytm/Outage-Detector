@@ -131,8 +131,7 @@ def initialize():
             except requests.exceptions.ConnectionError:
                 print("No internet, try reconnecting and running the script again!")
                 exit(1)
-        with open(os.path.join(config_path, 'ifttt_name.txt'), 'w+') as ifttt_nam:
-            ifttt_nam.write(ifttt_name)
+        json_data["ifttt_event"] = ifttt_name
     
     json_data["house_address"] = input("Enter a description of the run location (used to tell you in the "
                                        "{} where the outage happened): ".format(notification_type))
