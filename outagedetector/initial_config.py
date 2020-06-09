@@ -12,25 +12,31 @@ from outagedetector import pushnotification as push
 from outagedetector import send_mail as mail
 
 
+def curate_input(shown_message, expected_values):
+    result = input(shown_message)
+    if result in expected_values:
+        return result.lower()
+    else:
+        return curate_input("You need to input one of the following: {}. Try again! ".format(expected_values),
+                            expected_values)
+
 def initialize():
     config_path = os.path.join(os.path.expanduser("~"), ".config/outagedetector")
     if not os.path.exists(config_path):
         os.makedirs(config_path)
     if os.path.exists(os.path.join(config_path, "config.json")):
-        result = input("Configuration file already exists. Would you like to reconfigure the script? (yes/no) ")
-        if result.lower() != "yes":
+        result = curate_input("Configuration file already exists. Would you like to reconfigure the script? (y/n) ",
+                              ("y", "n"))
+        if result != "y":
             print("Alright, script should be ready to run. If you run into issues, run the initialization process "
                   "again")
             exit(1)
 
     json_data = {}
     print("We are going to walk you through setting up this script!")
-    notification_type = None
-    while notification_type not in {"mail", "notification", "ifttt"}:
-        notification_type = input("Would you like to be alerted of an outage through a notification on your phone, "
-                                  "through mail, or through ifttt? ")
-        if notification_type not in {"mail", "notification", "ifttt"}:
-            print("You need to input mail, notification, or ifttt!")
+    notification_type = curate_input("Would you like to be alerted of an outage through a notification"
+                                     " on your phone, through mail, or through ifttt? ",
+                                     ("notification", "mail", "ifttt"))
     json_data["notification_type"] = notification_type
     if notification_type == "mail":
         mail_working = False
@@ -108,28 +114,27 @@ def initialize():
             except requests.exceptions.ConnectionError:
                 print("No internet, try reconnecting and running the script again!")
                 exit(1)
-        with open(os.path.join(config_path, 'pb_key.txt'), 'w+') as pushbullet_file:
-            pushbullet_file.write(pushbullet_key)
 
     elif notification_type == "ifttt":
         ifttt_working = False
         failed_attempts = 0
         while not ifttt_working:
             try:
-                ifttt_name = input("Input your event name: ")
+                ifttt_name = input("Input your IFTTT event name: ")
                 keyring.set_password("IFTTT-OutageDetector", ifttt_name, getpass.getpass("Input your IFTTT API key: "))
                 api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
                 print("Trying to send a notification through IFTTT!")
                 push.push_to_ifttt(ifttt_name, api_key, "Testing IFTTT")
-                ifttt_work = input("Did you get the notification? (y/n) ")
+                ifttt_work = curate_input("Did you get the notification? (y/n) ", ("y", "n"))
                 if ifttt_work == "y":
                     ifttt_working = True
-                elif ifttt_work == "n":
+                else:
                     failed_attempts += 1
                     if failed_attempts >= 3:
                         print("Too many failed attempts, exiting script, try again later!")
                         exit(1)
                     print("Check to make sure you followed the steps correctly and try again.")
+
             except requests.exceptions.ConnectionError:
                 print("No internet, try reconnecting and running the script again!")
                 exit(1)
@@ -140,9 +145,9 @@ def initialize():
     with open(os.path.join(config_path, 'config.json'), 'w+') as json_file:
         json.dump(json_data, json_file)
 
-    crontab_edit = input("Would you like to setup the script to run automatically "
-                         "(it will run at boot time and at 5 minute intervals)? ")
-    if crontab_edit == "yes":
+    crontab_edit = curate_input("Would you like to setup the script to run automatically "
+                                "(it will run at boot time and at 5 minute intervals)? (y/n)", ("y", "n"))
+    if crontab_edit == "y":
         exec_path = os.path.join(os.path.dirname(sys.executable), "outage_detector")
         cron_scheduling.schedule_job(exec_path, "--run scheduled --notify {}".format(notification_type), config_path, 5)
         cron_scheduling.schedule_job(exec_path, "--run boot --notify {}".format(notification_type), config_path,

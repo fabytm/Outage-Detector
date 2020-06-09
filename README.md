@@ -30,9 +30,15 @@ Afterwards, all you need to do is to run the outage_detector command line interf
 outage_detector --init
 ```
 
-From here you can choose the way you want to be notified and will be prompted to enter either your e-mail information or PushBullet API key.
+From here you can choose the way you want to be notified and will be prompted to enter your e-mail information, PushBullet API key or IFTTT API key.
 
 Additionally, it will also ask you if you want to set up scheduling for this module. Choosing to do so is recommended for inexperienced users (this will create 2 cron jobs, one running at boot time and one every 5 minutes, to check in on internet status and record timestamp if either the internet connection drops or a power outage happens).
+
+Update the module to the latest version in a virtual environment with pip:
+
+```
+pip3 install Outage-Detector --upgrade
+```
 
 ## How to setup IFTTT
 
