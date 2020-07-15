@@ -8,7 +8,7 @@ with open("README.md", 'r') as readme:
 
 setup(
     name='Outage Detector',
-    version='1.1.1',
+    version='1.1.2',
     description='A module helping you find out when internet and power outages happen.',
     long_description=long_description,
     long_description_content_type='text/markdown',

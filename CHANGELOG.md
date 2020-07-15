@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2020-07-15
+### Fixed
+- Python 3.5 keyring bug fixed by @p1r473
+
 ## [1.1.1] - 2020-06-09
 ### Added
 - curate_input() function that curates user input to make sure only the expected values are entered
