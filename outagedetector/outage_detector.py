@@ -33,7 +33,7 @@ def check_power_and_internet(run, notification):
         just_booted = True
     elif run == "scheduled":
         just_booted = False
-    if notification == "notification" or "ifttt":
+    if notification == "notification" or notification == "ifttt":
         send_notification = True
         ifttt_notification = False
     elif notification == "mail":
