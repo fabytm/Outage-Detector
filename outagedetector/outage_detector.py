@@ -157,6 +157,7 @@ def check_power_and_internet(run, notification):
                 min_outage_time = max(range(0, internet_downtime + 1, periodicity))
             else:
                 min_outage_time = 0
+            os.system('sudo shutdown now')    
             print("Internet was down for {} to {} minutes at {}".format(min_outage_time, internet_downtime,
                                                                         current_timestring))
             notification = "Internet has been down for {} to {} minutes at {}.".format(min_outage_time,
