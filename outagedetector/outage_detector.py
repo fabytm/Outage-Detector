@@ -5,6 +5,8 @@ from pathlib import Path
 import socket
 
 import keyring
+import keyring.backend
+from keyrings.alt.file import PlaintextKeyring
 
 from outagedetector import pushnotification as push
 from outagedetector import send_mail as mail
@@ -57,6 +59,7 @@ def check_power_and_internet(run, notification):
                 sender = mail_json["sender"]
                 receivers = mail_json["receivers"]
                 smtp_server = mail_json["smtp_server"]
+                keyring.set_keyring(PlaintextKeyring())
                 password = keyring.get_password("Mail-OutageDetector", sender)
                 if password is None:
                     print("Mail password not found, try running initial configuration again!")
@@ -68,6 +71,7 @@ def check_power_and_internet(run, notification):
             print("Config.json file doesn't have all fields (sender, receivers, smtp_server, house address")
     else:
         if not ifttt_notification:
+            keyring.set_keyring(PlaintextKeyring())
             push_key = keyring.get_password("PushBullet-OutageDetector", "pushbullet")
             try:
                 with open(os.path.join(config_path, "config.json")) as json_file:
@@ -87,6 +91,7 @@ def check_power_and_internet(run, notification):
                 print("Configuration file does not exist, try running the initial configuration again!")
             except KeyError:
                 print("Config.json file doesn't have all fields, try running the initial configuration again!")
+            keyring.set_keyring(PlaintextKeyring())
             api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
 
     if address:

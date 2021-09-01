@@ -6,6 +6,8 @@ import sys
 
 import getpass
 import keyring
+import keyring.backend
+from keyrings.alt.file import PlaintextKeyring
 
 from outagedetector import cron_scheduling
 from outagedetector import pushnotification as push
@@ -47,7 +49,7 @@ def initialize():
                 sender_mail_address = mail.check_mails(input("Please input the mail address you want to send the "
                                                              "notification mail from: "))
             json_data["sender"] = sender_mail_address
-
+            keyring.set_keyring(PlaintextKeyring())
             keyring.set_password("Mail-OutageDetector", json_data["sender"],
                                  getpass.getpass("Type in your password: "))
 
@@ -97,6 +99,7 @@ def initialize():
         failed_attempts = 0
         while not pushbullet_working:
             try:
+                keyring.set_keyring(PlaintextKeyring())
                 keyring.set_password("PushBullet-OutageDetector", "pushbullet",
                                      getpass.getpass("Input your PushBullet API key: "))
                 pushbullet_key = keyring.get_password("PushBullet-OutageDetector", "pushbullet")
@@ -121,6 +124,7 @@ def initialize():
         while not ifttt_working:
             try:
                 ifttt_name = input("Input your IFTTT event name: ")
+                keyring.set_keyring(PlaintextKeyring())
                 keyring.set_password("IFTTT-OutageDetector", ifttt_name, getpass.getpass("Input your IFTTT API key: "))
                 api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
                 print("Trying to send a notification through IFTTT!")
