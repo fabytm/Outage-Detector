@@ -3,7 +3,7 @@ import json
 import os
 from pathlib import Path
 import socket
-
+import time
 import keyring
 import keyring.backend
 from keyrings.alt.file import PlaintextKeyring
@@ -11,13 +11,22 @@ from keyrings.alt.file import PlaintextKeyring
 from outagedetector import pushnotification as push
 from outagedetector import send_mail as mail
 
+URL_TO_CHECK = 'www.google.com'
+PORT_TO_CHECK = 80
+RETRIES = 3
+TIME_BETWEEN_RETRIES = 5
 
 def check_internet_connection():
-    try:
-        socket.create_connection(("www.google.com", 80))    # if connection to google fails, we assume internet is down
-        return True
-    except OSError:
-        pass
+    count = 1
+    while count <= RETRIES:
+        try:
+            socket.create_connection((URL_TO_CHECK, PORT_TO_CHECK))    # if connection to google fails, we assume internet is down
+            return True
+        except OSError:
+            pass
+        print("Could not reach {}:{} on attempt {}. Trying again in {} seconds.".format(URL_TO_CHECK,PORT_TO_CHECK,count,TIME_BETWEEN_RETRIES))
+        count += 1
+        time.sleep(TIME_BETWEEN_RETRIES)
     return False
 
 
