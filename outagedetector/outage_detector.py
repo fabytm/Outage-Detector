@@ -11,7 +11,7 @@ from keyrings.alt.file import PlaintextKeyring
 from outagedetector import pushnotification as push
 from outagedetector import send_mail as mail
 
-URL_TO_CHECK = 'www.goodfgdfggle.com'
+URL_TO_CHECK = 'www.google.com'
 PORT_TO_CHECK = 80
 RETRIES = 3
 TIME_BETWEEN_RETRIES = 5
