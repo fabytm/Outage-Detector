@@ -61,6 +61,7 @@ def check_power_and_internet(run, notification):
         ifttt_notification = True
 
     config_path = os.path.join(os.path.expanduser("~"), ".config/outagedetector")
+    log_path = os.path.join("/var/log/")
     address_available = False
     address = ""
     timestamp_format = "%d-%m-%Y %H-%M-%S"
@@ -118,7 +119,7 @@ def check_power_and_internet(run, notification):
     current_hour_min = datetime.strftime(current_timestamp, hour_minute_format)
 
     try:
-        with open(os.path.join(config_path, "last_timestamp.txt")) as file:
+        with open(os.path.join(log_path, "outagedetector_last_timestamp.txt")) as file:
             read_string = file.read()
     except FileNotFoundError:
         read_string = ""
@@ -149,7 +150,7 @@ def check_power_and_internet(run, notification):
                                           last_power_timestamp,
                                           last_periodicity)
 
-    with open(os.path.join(config_path, "last_timestamp.txt"), 'w+') as file:
+    with open(os.path.join(log_path, "outagedetector_last_timestamp.txt"), 'w+') as file:
         if internet_connected:
             file.write("{},{},{},{}".format(current_timestring, current_timestring, run, periodicity))
         else:
