@@ -6,6 +6,8 @@ import sys
 
 import getpass
 import keyring
+import keyring.backend
+from keyrings.alt.file import PlaintextKeyring
 
 from outagedetector import cron_scheduling
 from outagedetector import pushnotification as push
@@ -22,6 +24,7 @@ def curate_input(shown_message, expected_values):
 
 def initialize():
     config_path = os.path.join(os.path.expanduser("~"), ".config/outagedetector")
+    log_path = os.path.join("/var/log/")
     if not os.path.exists(config_path):
         os.makedirs(config_path)
     if os.path.exists(os.path.join(config_path, "config.json")):
@@ -47,7 +50,7 @@ def initialize():
                 sender_mail_address = mail.check_mails(input("Please input the mail address you want to send the "
                                                              "notification mail from: "))
             json_data["sender"] = sender_mail_address
-
+            keyring.set_keyring(PlaintextKeyring())
             keyring.set_password("Mail-OutageDetector", json_data["sender"],
                                  getpass.getpass("Type in your password: "))
 
@@ -97,6 +100,7 @@ def initialize():
         failed_attempts = 0
         while not pushbullet_working:
             try:
+                keyring.set_keyring(PlaintextKeyring())
                 keyring.set_password("PushBullet-OutageDetector", "pushbullet",
                                      getpass.getpass("Input your PushBullet API key: "))
                 pushbullet_key = keyring.get_password("PushBullet-OutageDetector", "pushbullet")
@@ -121,6 +125,7 @@ def initialize():
         while not ifttt_working:
             try:
                 ifttt_name = input("Input your IFTTT event name: ")
+                keyring.set_keyring(PlaintextKeyring())
                 keyring.set_password("IFTTT-OutageDetector", ifttt_name, getpass.getpass("Input your IFTTT API key: "))
                 api_key = keyring.get_password("IFTTT-OutageDetector", ifttt_name)
                 print("Trying to send a notification through IFTTT!")
@@ -149,8 +154,8 @@ def initialize():
                                 "(it will run at boot time and at 5 minute intervals)? (y/n)", ("y", "n"))
     if crontab_edit == "y":
         exec_path = os.path.join(os.path.dirname(sys.executable), "outage_detector")
-        cron_scheduling.schedule_job(exec_path, "--run scheduled --notify {}".format(notification_type), config_path, 5)
-        cron_scheduling.schedule_job(exec_path, "--run boot --notify {}".format(notification_type), config_path,
+        cron_scheduling.schedule_job(exec_path, "--run scheduled --notify {}".format(notification_type), log_path, 5)
+        cron_scheduling.schedule_job(exec_path, "--run boot --notify {}".format(notification_type), log_path,
                                      at_boot=True)
 
 
