@@ -141,6 +141,11 @@ def check_power_and_internet(run, notification):
         last_internet_timestring = current_timestring
         last_argument = "N/A"
         last_periodicity = 0
+    except Exception:
+        last_power_timestring = current_timestring
+        last_internet_timestring = current_timestring
+        last_argument = "N/A"
+        last_periodicity = 0
 
     last_power_timestamp = datetime.strptime(last_power_timestring, timestamp_format)
 
